@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <h1>ひとりしりとり</h1>
+  <p>「しりとり」の「り」を開始点としてしりとりをします。前の単語に続く単語をひらがなでテキストフィールドに入力して送信を押してください</p>
+  <h2>ルール</h2>
+  <p>・「ー」で終わる単語は一つ前の文字が次の単語の語頭になります。</p>
+  <p>・一度使用した単語を再度使用することはできません。
+  <p>・精度の良いしりとりを続けることでコンボが繋がります。一度使った言葉を再度使用したり前の単語に続かない言葉を入力するとコンボはリセットされます。</p>
+  <p>・「ん」で終わる単語を入力するとゲームオーバーです。</p>
+  <p>-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</p>
+
+  <nobr id="maxc"></nobr>
+  <nobr id="turn"></nobr>
+  <p id="combo"></p>
+  <p id="previousWord"></p>
+  <input id="nextWordInput" type="text" />
+  <button id="nextWordSendButton">送信</button>
+
+
+  <script type="module">
+
+    window.onload = async (event) => {//初期設定
+      const response = await fetch("/shiritori");
+
+      const previousWord = await response.text();
+
+      const sta = document.querySelector("#maxc");
+      sta.innerText = "最大連鎖数: 0  ";
+
+      const sta2 = document.querySelector("#turn");
+      sta2.innerText = "経過ターン数: 0";
+
+      const para = document.querySelector("#combo");
+      para.innerText = "0 連鎖!";
+
+      const para2 = document.querySelector("#previousWord");
+      para2.innerText = "前の単語: " + previousWord.split(",")[0];
+
+
+      console.log(previousWord);
+    };
+
+
+    document.querySelector("#nextWordSendButton").onclick = async (event) => {
+      const nextWord = document.querySelector("#nextWordInput").value;
+      const response = await fetch("/shiritori", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nextWord })
+      });
+
+      if (response.status / 100 !== 2) {
+
+        alert(await response.text());
+
+        return;
+      }
+
+
+      const previousWord = await response.text();
+
+      const sta = document.querySelector("#maxc");
+      sta.innerText = "最大連鎖数: " + previousWord.split(",")[2] + "  ";
+
+      const sta2 = document.querySelector("#turn");
+      sta2.innerText = "経過ターン数:" + previousWord.split(",")[3];
+
+      const para = document.querySelector("#combo");
+      para.innerText = previousWord.split(",")[1] + " 連鎖!";
+
+      const para2 = document.querySelector("#previousWord");
+      para2.innerText = "前の単語: " + previousWord.split(",")[0];
+
+      console.log(previousWord);
+    };
+
+  </script>
+<p><img src="shi.jpeg"></p>
+<p>画像引用元:https://www.ac-illust.com/main/detail.php?id=1767985</p>
+</body>
+
+</html>
