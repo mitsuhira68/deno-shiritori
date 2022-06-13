@@ -27,9 +27,9 @@ serve(async (req) => {
       combo = 0;
       previousWord = "しりとり";
       list.length = 0;
-      return new Response("GAME OVER" + "最大連鎖数: " + maxc + "  "+ "経過ターン数: " + turn, { status: 400 });//status:400 ダイアログを出す
       turn = 0;
       maxc = 0;
+      return new Response("GAME OVER" ,{ status: 400 });//status:400 ダイアログを出す
     }else if(nextWord.charAt(nextWord.length - 1) === ''){
     return new Response("文字を入力してください",{status:400});
     }else if(list.includes(nextWord)){
